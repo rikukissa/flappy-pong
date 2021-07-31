@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { InteractionData, InteractionEvent } from 'pixi.js';
 
 let type = 'WebGL';
 if (!PIXI.utils.isWebGLSupported()) {
@@ -6,8 +7,8 @@ if (!PIXI.utils.isWebGLSupported()) {
 }
 
 const ball = {
-  x: 0,
-  y: 0,
+  x: 100,
+  y: 250,
   vy: 0,
   vx: 0
 };
@@ -20,11 +21,11 @@ let app = new PIXI.Application({
 
 const graphics = new PIXI.Graphics();
 
-const hitArea = new PIXI.Circle(100 + ball.x, 250 + ball.y, 50);
+const hitArea = new PIXI.Circle(ball.x, ball.y, 50);
 // Circle
 graphics.lineStyle(0); // draw a circle, set the lineStyle to zero so the circle doesn't have an outline
 graphics.beginFill(0xde3249, 1);
-graphics.drawCircle(100 + ball.x, 250 + ball.y, 50);
+graphics.drawCircle(ball.x, ball.y, 50);
 graphics.endFill();
 
 app.stage.addChild(graphics);
@@ -45,9 +46,9 @@ graphics
   .on('pointermove', onDragMove);
 
 let dragging = false;
-let dragStart = null;
+let dragStart: InteractionData | null = null;
 
-function onDragStart(event) {
+function onDragStart(event: InteractionEvent) {
   dragStart = event.data;
   dragging = true;
 }
@@ -60,7 +61,7 @@ function onDragEnd() {
 
 function onDragMove() {
   if (dragging) {
-    const newPosition = dragStart.getLocalPosition(this.parent);
+    const newPosition = dragStart!.getLocalPosition(graphics.parent);
     ball.x = newPosition.x;
     ball.y = newPosition.y;
   }
@@ -74,10 +75,10 @@ function gameLoop(delta) {
   graphics.clear();
   graphics.lineStyle(0); // draw a circle, set the lineStyle to zero so the circle doesn't have an outline
   graphics.beginFill(0xde3249, 1);
-  graphics.drawCircle(100 + ball.x, 250 + ball.y, 50);
+  graphics.drawCircle(ball.x, ball.y, 50);
   graphics.endFill();
-  hitArea.x = 100 + ball.x;
-  hitArea.y = 250 + ball.y;
+  hitArea.x = ball.x;
+  hitArea.y = ball.y;
 }
 
 setup();
