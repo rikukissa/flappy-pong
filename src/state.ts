@@ -3,7 +3,7 @@ import { Event } from "./events";
 import { WORLD_HEIGHT, WORLD_WIDTH } from "./world";
 
 export interface State {
-  ball: Ball;
+  bird: Bird;
   players: Player[];
 }
 export interface Player {
@@ -14,7 +14,7 @@ export interface Player {
   y: number;
   vy: number;
 }
-export interface Ball {
+export interface Bird {
   x: number;
   y: number;
   radius: number;
@@ -26,7 +26,7 @@ export const PLAYER_WIDTH = 7;
 export const PLAYER_HEIGHT = 20;
 
 export const initialState = {
-  ball: {
+  bird: {
     x: WORLD_WIDTH / 2,
     y: WORLD_HEIGHT / 2,
     radius: 2.5,
@@ -53,7 +53,7 @@ export const initialState = {
   ],
 };
 
-function ballTouchesPlayerSide(ball: State["ball"], player: Player) {
+function ballTouchesPlayerSide(ball: State["bird"], player: Player) {
   return (
     ball.x + ball.radius * 2 > player.x &&
     ball.x < player.x + player.width &&
@@ -61,7 +61,7 @@ function ballTouchesPlayerSide(ball: State["ball"], player: Player) {
     ball.y + ball.radius < player.y + player.height
   );
 }
-function ballTouchesPlayerTopOrBottom(ball: State["ball"], player: Player) {
+function ballTouchesPlayerTopOrBottom(ball: State["bird"], player: Player) {
   return (
     ball.x + ball.radius < player.x + player.width &&
     ball.x + ball.radius > player.x &&
@@ -85,7 +85,7 @@ function updatePlayer(player: Player, eventBuffer: Event[]) {
 }
 
 function gameOver(state: State) {
-  return state.ball.x < -70 || state.ball.x > WORLD_WIDTH + 70;
+  return state.bird.x < -70 || state.bird.x > WORLD_WIDTH + 70;
 }
 
 export function update(
@@ -95,61 +95,61 @@ export function update(
 ): State {
   updatePlayer(state.players[0], eventBuffer);
   updatePlayer(state.players[1], getEvents(state));
-  state.ball.x += state.ball.vx;
-  state.ball.y += state.ball.vy;
+  state.bird.x += state.bird.vx;
+  state.bird.y += state.bird.vy;
 
   if (
-    state.ball.y <= 0 ||
-    state.ball.y + state.ball.radius * 2 >= WORLD_HEIGHT
+    state.bird.y <= 0 ||
+    state.bird.y + state.bird.radius * 2 >= WORLD_HEIGHT
   ) {
-    state.ball.vy *= -1;
+    state.bird.vy *= -1;
   }
 
   const horizontallyTouchingPlayer = state.players.find((player) =>
-    ballTouchesPlayerSide(state.ball, player)
+    ballTouchesPlayerSide(state.bird, player)
   );
   if (horizontallyTouchingPlayer) {
-    state.ball.vx *= -1.15;
-    state.ball.vy =
+    state.bird.vx *= -1.15;
+    state.bird.vy =
       horizontallyTouchingPlayer.vy -
       (horizontallyTouchingPlayer.y +
         horizontallyTouchingPlayer.height / 2 -
-        state.ball.y) /
+        state.bird.y) /
         10;
-    state.ball.x = clamp(
+    state.bird.x = clamp(
       PLAYER_WIDTH + 2,
       WORLD_WIDTH - PLAYER_WIDTH - 2,
-      state.ball.x
+      state.bird.x
     );
   }
   const verticallyTouchingPlayer = state.players.find((player) =>
-    ballTouchesPlayerTopOrBottom(state.ball, player)
+    ballTouchesPlayerTopOrBottom(state.bird, player)
   );
   if (verticallyTouchingPlayer) {
-    state.ball.vy *= -1.2;
+    state.bird.vy *= -1.2;
     const touchesBottom =
-      state.ball.y + state.ball.radius >
+      state.bird.y + state.bird.radius >
       verticallyTouchingPlayer.y + verticallyTouchingPlayer.height;
-    state.ball.y >
+    state.bird.y >
       verticallyTouchingPlayer.y + verticallyTouchingPlayer.height / 2;
 
     if (touchesBottom) {
-      state.ball.y = clamp(
+      state.bird.y = clamp(
         verticallyTouchingPlayer.y + verticallyTouchingPlayer.height,
         WORLD_HEIGHT,
-        state.ball.y
+        state.bird.y
       );
     } else {
-      state.ball.y = clamp(
+      state.bird.y = clamp(
         0,
-        verticallyTouchingPlayer.y - state.ball.radius * 2,
-        state.ball.y
+        verticallyTouchingPlayer.y - state.bird.radius * 2,
+        state.bird.y
       );
     }
   }
-  state.ball.vx *= 0.9998;
-  state.ball.vx = clamp(-3, 3, state.ball.vx);
-
+  state.bird.vx *= 0.9998;
+  state.bird.vx = clamp(-3, 3, state.bird.vx);
+  state.bird.y = clamp(0, WORLD_HEIGHT - state.bird.radius * 2, state.bird.y);
   if (gameOver(state)) {
     return initialState;
   }

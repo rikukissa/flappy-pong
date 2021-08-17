@@ -3,14 +3,14 @@ import { State } from "./state";
 import { WORLD_WIDTH } from "./world";
 
 export function getEvents(state: State): Event[] {
-  const slope = state.ball.vy / state.ball.vx;
+  const slope = state.bird.vy / state.bird.vx;
 
-  const y = state.ball.y - slope * (state.ball.x - WORLD_WIDTH);
+  const y = state.bird.y - slope * (state.bird.x - WORLD_WIDTH);
 
   const currentY = state.players[1].y;
   const distance = y - currentY;
 
-  if (state.ball.vx < 0) {
+  if (state.bird.vx < 0) {
     return [];
   }
 

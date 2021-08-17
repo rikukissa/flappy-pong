@@ -63,12 +63,18 @@ export async function createRenderer() {
   container.addChild(background);
   container.addChild(ground);
 
-  const bird = new PIXI.Sprite(PIXI.utils.TextureCache["birdUp.png"]);
-
+  const bird = new PIXI.AnimatedSprite([
+    PIXI.utils.TextureCache["birdUp.png"],
+    PIXI.utils.TextureCache["birdMiddle.png"],
+    PIXI.utils.TextureCache["birdDown.png"],
+  ]);
+  bird.animationSpeed = 0.5;
+  bird.loop = true;
   const players = [
     new PIXI.Sprite(PIXI.utils.TextureCache["pipeDown.png"]),
     new PIXI.Sprite(PIXI.utils.TextureCache["pipeDown.png"]),
   ];
+  bird.play();
 
   players.forEach((player) => container.addChild(player));
   container.addChild(bird);
@@ -83,24 +89,25 @@ export async function createRenderer() {
   }
 
   return function render(tick: number, state: State) {
-    const ballPosition = toScreenPosition(state.ball);
-    const radius = toScreenWidth(state.ball.radius);
+    const ballPosition = toScreenPosition(state.bird);
+    const radius = toScreenWidth(state.bird.radius);
     ground.tilePosition.x = ground.tilePosition.x - tick;
     background.tilePosition.x = background.tilePosition.x - tick * 1.5;
 
     bird.height = radius * 2;
     bird.width = bird.height * 1.41666;
+    bird.animationSpeed = Math.abs(state.bird.vx) + Math.abs(state.bird.vy);
     bird.x = ballPosition.x + radius;
     bird.y = ballPosition.y + radius;
 
-    if (Math.sign(bird.scale.x) != Math.sign(state.ball.vx)) {
+    if (Math.sign(bird.scale.x) != Math.sign(state.bird.vx)) {
       bird.scale.x = bird.scale.x * -1;
     }
 
     bird.pivot.x = bird.texture.width / 2;
     bird.pivot.y = bird.texture.height / 2;
 
-    bird.angle = Math.atan(state.ball.vy / state.ball.vx) * (180 / Math.PI);
+    bird.angle = Math.atan(state.bird.vy / state.bird.vx) * (180 / Math.PI);
 
     state.players.forEach(drawPlayer);
   };
