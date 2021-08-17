@@ -34,13 +34,21 @@ export const initialState = {
     vx: -0.6,
   },
   players: [
-    { width: PLAYER_WIDTH, height: PLAYER_HEIGHT, points: 0, x: 2, y: 0 },
+    {
+      width: PLAYER_WIDTH,
+      height: PLAYER_HEIGHT,
+      points: 0,
+      x: 2,
+      y: 0,
+      vy: 0,
+    },
     {
       width: PLAYER_WIDTH,
       height: PLAYER_HEIGHT,
       points: 0,
       x: WORLD_WIDTH - PLAYER_WIDTH - 2,
       y: 0,
+      vy: 0,
     },
   ],
 };
@@ -74,6 +82,10 @@ function updatePlayer(player: Player, eventBuffer: Event[]) {
     }
   });
   player.vy = (player.y - prevY) / 5;
+}
+
+function gameOver(state: State) {
+  return state.ball.x < -70 || state.ball.x > WORLD_WIDTH + 70;
 }
 
 export function update(
@@ -137,6 +149,10 @@ export function update(
   }
   state.ball.vx *= 0.9998;
   state.ball.vx = clamp(-3, 3, state.ball.vx);
+
+  if (gameOver(state)) {
+    return initialState;
+  }
 
   return state;
 }
