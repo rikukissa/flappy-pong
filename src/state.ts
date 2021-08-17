@@ -12,6 +12,7 @@ export interface Player {
   points: number;
   x: number;
   y: number;
+  vy: number;
 }
 export interface Ball {
   x: number;
@@ -65,31 +66,23 @@ function clamp(min: number, max: number, value: number) {
   return Math.min(Math.max(value, min), max);
 }
 
+function updatePlayer(player: Player, eventBuffer: Event[]) {
+  const prevY = player.y;
+  eventBuffer.forEach((event) => {
+    if (event.type === "mousemove") {
+      player.y = Math.min(WORLD_HEIGHT - PLAYER_HEIGHT, Math.max(0, event.y));
+    }
+  });
+  player.vy = (player.y - prevY) / 5;
+}
+
 export function update(
   delta: number,
   state: State,
   eventBuffer: Event[]
 ): State {
-  eventBuffer.forEach((event) => {
-    if (event.type === "mousemove") {
-      state.players[0].y = Math.min(
-        WORLD_HEIGHT - PLAYER_HEIGHT,
-        Math.max(0, event.y)
-      );
-    }
-  });
-
-  const enemyEvents = getEvents(state);
-
-  enemyEvents.forEach((event) => {
-    if (event.type === "mousemove") {
-      state.players[1].y = Math.min(
-        WORLD_HEIGHT - PLAYER_HEIGHT,
-        Math.max(0, event.y)
-      );
-    }
-  });
-
+  updatePlayer(state.players[0], eventBuffer);
+  updatePlayer(state.players[1], getEvents(state));
   state.ball.x += state.ball.vx;
   state.ball.y += state.ball.vy;
 
@@ -100,10 +93,17 @@ export function update(
     state.ball.vy *= -1;
   }
 
-  if (
-    state.players.some((player) => ballTouchesPlayerSide(state.ball, player))
-  ) {
+  const horizontallyTouchingPlayer = state.players.find((player) =>
+    ballTouchesPlayerSide(state.ball, player)
+  );
+  if (horizontallyTouchingPlayer) {
     state.ball.vx *= -1.15;
+    state.ball.vy =
+      horizontallyTouchingPlayer.vy -
+      (horizontallyTouchingPlayer.y +
+        horizontallyTouchingPlayer.height / 2 -
+        state.ball.y) /
+        10;
     state.ball.x = clamp(
       PLAYER_WIDTH + 2,
       WORLD_WIDTH - PLAYER_WIDTH - 2,
@@ -114,9 +114,11 @@ export function update(
     ballTouchesPlayerTopOrBottom(state.ball, player)
   );
   if (verticallyTouchingPlayer) {
-    state.ball.vy *= -1.15;
+    state.ball.vy *= -1.2;
     const touchesBottom =
-      state.ball.y >
+      state.ball.y + state.ball.radius >
+      verticallyTouchingPlayer.y + verticallyTouchingPlayer.height;
+    state.ball.y >
       verticallyTouchingPlayer.y + verticallyTouchingPlayer.height / 2;
 
     if (touchesBottom) {
@@ -126,10 +128,15 @@ export function update(
         state.ball.y
       );
     } else {
-      state.ball.y = clamp(0, verticallyTouchingPlayer.y, state.ball.y);
+      state.ball.y = clamp(
+        0,
+        verticallyTouchingPlayer.y - state.ball.radius * 2,
+        state.ball.y
+      );
     }
   }
   state.ball.vx *= 0.9998;
+  state.ball.vx = clamp(-3, 3, state.ball.vx);
 
   return state;
 }
