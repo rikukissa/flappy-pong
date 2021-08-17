@@ -34,7 +34,7 @@ export function loadAssets() {
   return new Promise<void>((resolve) => {
     const loader = PIXI.Loader.shared;
 
-    loader.add("gameSprite", "./src/spritesData.json", () => {
+    loader.add("gameSprite", "./src/sprites/spritesData.json", () => {
       resolve();
     });
 
