@@ -23,11 +23,11 @@ function toScreenPosition(worldPosition: Position) {
 }
 
 function toScreenWidth(worldWidth: number) {
-  return (worldWidth / WORLD_WIDTH) * app.view.width;
+  return Math.ceil((worldWidth / WORLD_WIDTH) * app.view.width);
 }
 
 function toScreenHeight(worldHeight: number) {
-  return (worldHeight / WORLD_HEIGHT) * app.view.height;
+  return Math.ceil((worldHeight / WORLD_HEIGHT) * app.view.height);
 }
 
 export function loadAssets() {
