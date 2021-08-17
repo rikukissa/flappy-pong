@@ -1,148 +1,126 @@
-import * as PIXI from "pixi.js";
-import { InteractionEvent } from "pixi.js";
+import {
+  State,
+  Player,
+  initialState,
+  PLAYER_HEIGHT,
+  PLAYER_WIDTH,
+} from "./state";
+import { clearBuffer, Event, eventBuffer } from "./events";
+import { getEvents } from "./enemy";
+import { WORLD_WIDTH, WORLD_HEIGHT } from "./world";
+import { createRenderer, Renderer } from "./render";
+import { app } from "./app";
 
-const initialState = {
-  ball: {
-    x: 90,
-    y: 0 + 1,
-    radius: 0.3,
-    vy: -0.3,
-    vx: -0.3,
-  },
-  players: [
-    { width: 2, height: 10, points: 0, x: 0, y: 0 },
-    { width: 2, height: 10, points: 0, x: 98, y: 0 },
-  ],
-};
-
-type Player = typeof initialState.players[0];
-type State = typeof initialState;
-
-//Create a Pixi Application
-const app = new PIXI.Application({
-  width: window.innerWidth,
-  height: window.innerHeight,
+window.addEventListener("resize", () => {
+  app.resize();
 });
 
-const graphics = new PIXI.Graphics();
-
-app.stage.addChild(graphics);
-
-//Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 
-type Event = { type: "mousemove"; x: number; y: number };
+async function setup() {
+  const renderer = await createRenderer();
 
-function setup() {
-  //Start the game loop by adding the `gameLoop` function to
-  //Pixi's `ticker` and providing it with a `delta` argument.
   let state = initialState;
-  let eventBuffer: Event[] = [];
-  graphics.on("pointermove", onDragMove);
-  function onDragMove(event: InteractionEvent) {
-    eventBuffer.push({
-      ...toWorldPosition(event.data.getLocalPosition(graphics)),
-      type: "mousemove",
-    });
-  }
-
   app.ticker.add((delta) => {
-    state = gameLoop(delta, state, eventBuffer);
-    eventBuffer = [];
+    state = gameLoop(renderer, delta, state, eventBuffer);
+    clearBuffer();
   });
 }
 
-graphics.interactive = true;
-
-type Position = {
-  x: number;
-  y: number;
-};
-
-function toWorldPosition(screenPosition: Position) {
-  return {
-    x: (screenPosition.x / window.innerWidth) * 100,
-    y: (screenPosition.y / window.innerHeight) * 100,
-  };
-}
-
-function toScreenPosition(worldPosition: Position) {
-  return {
-    x: toScreenWidth(worldPosition.x),
-    y: toScreenHeight(worldPosition.y),
-  };
-}
-
-function toScreenWidth(worldWidth: number) {
-  return (worldWidth / 100) * window.innerWidth;
-}
-
-function toScreenHeight(worldHeight: number) {
-  return (worldHeight / 100) * window.innerHeight;
-}
-
-function ballTouchesPlayer(ball: State["ball"], player: Player) {
+function ballTouchesPlayerSide(ball: State["ball"], player: Player) {
   return (
     ball.x + ball.radius * 2 > player.x &&
     ball.x < player.x + player.width &&
+    ball.y + ball.radius > player.y &&
+    ball.y + ball.radius < player.y + player.height
+  );
+}
+function ballTouchesPlayerTopOrBottom(ball: State["ball"], player: Player) {
+  return (
+    ball.x + ball.radius < player.x + player.width &&
+    ball.x + ball.radius > player.x &&
     ball.y + ball.radius * 2 > player.y &&
     ball.y < player.y + player.height
   );
+}
 
-  return true;
+function clamp(min: number, max: number, value: number) {
+  return Math.min(Math.max(value, min), max);
 }
 
 function update(delta: number, state: State, eventBuffer: Event[]): State {
   eventBuffer.forEach((event) => {
     if (event.type === "mousemove") {
-      state.players[0].y = event.y;
+      state.players[0].y = Math.min(
+        WORLD_HEIGHT - PLAYER_HEIGHT,
+        Math.max(0, event.y)
+      );
+    }
+  });
+
+  const enemyEvents = getEvents(state);
+
+  enemyEvents.forEach((event) => {
+    if (event.type === "mousemove") {
+      state.players[1].y = Math.min(
+        WORLD_HEIGHT - PLAYER_HEIGHT,
+        Math.max(0, event.y)
+      );
     }
   });
 
   state.ball.x += state.ball.vx;
   state.ball.y += state.ball.vy;
 
-  if (state.ball.y < 0 || state.ball.y > 100) {
+  if (
+    state.ball.y <= 0 ||
+    state.ball.y + state.ball.radius * 2 >= WORLD_HEIGHT
+  ) {
     state.ball.vy *= -1;
   }
 
-  if (state.players.some((player) => ballTouchesPlayer(state.ball, player))) {
-    state.ball.vx *= -1;
+  if (
+    state.players.some((player) => ballTouchesPlayerSide(state.ball, player))
+  ) {
+    state.ball.vx *= -1.15;
+    state.ball.x = clamp(
+      PLAYER_WIDTH + 2,
+      WORLD_WIDTH - PLAYER_WIDTH - 2,
+      state.ball.x
+    );
   }
+  const verticallyTouchingPlayer = state.players.find((player) =>
+    ballTouchesPlayerTopOrBottom(state.ball, player)
+  );
+  if (verticallyTouchingPlayer) {
+    state.ball.vy *= -1.15;
+    const touchesBottom =
+      state.ball.y >
+      verticallyTouchingPlayer.y + verticallyTouchingPlayer.height / 2;
+
+    if (touchesBottom) {
+      state.ball.y = clamp(
+        verticallyTouchingPlayer.y + verticallyTouchingPlayer.height,
+        WORLD_HEIGHT,
+        state.ball.y
+      );
+    } else {
+      state.ball.y = clamp(0, verticallyTouchingPlayer.y, state.ball.y);
+    }
+  }
+  state.ball.vx *= 0.9998;
 
   return state;
 }
 
-function drawPlayer(player: Player) {
-  graphics.beginFill(0xffffff, 1);
-  const playerPosition = toScreenPosition(player);
-  graphics.drawRect(
-    playerPosition.x,
-    playerPosition.y,
-    toScreenWidth(player.width),
-    toScreenHeight(player.height)
-  );
-  graphics.endFill();
-}
-
-function paint(state: State) {
-  graphics.clear();
-  graphics.lineStyle(0);
-  graphics.beginFill(0xffffff, 1);
-  const ballPosition = toScreenPosition(state.ball);
-  const radius = toScreenWidth(state.ball.radius);
-  graphics.drawCircle(
-    ballPosition.x - radius,
-    ballPosition.y - radius,
-    toScreenWidth(state.ball.radius)
-  );
-  state.players.forEach(drawPlayer);
-  graphics.endFill();
-}
-
-function gameLoop(delta: number, state: State, eventBuffer: Event[]) {
+function gameLoop(
+  renderer: Renderer,
+  delta: number,
+  state: State,
+  eventBuffer: Event[]
+) {
   const newState = update(delta, state, eventBuffer);
-  paint(newState);
+  renderer(delta, newState);
   return newState;
 }
 
