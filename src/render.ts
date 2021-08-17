@@ -31,7 +31,7 @@ function toScreenHeight(worldHeight: number) {
 }
 
 export function loadAssets() {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<void>((resolve) => {
     const loader = PIXI.Loader.shared;
 
     loader.add("gameSprite", "./src/spritesData.json", () => {

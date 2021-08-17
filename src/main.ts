@@ -15,7 +15,7 @@ window.addEventListener("resize", () => {
   app.resize();
 });
 
-document.body.appendChild(app.view);
+window.document.body.appendChild(app.view);
 
 async function setup() {
   const renderer = await createRenderer();
