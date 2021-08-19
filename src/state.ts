@@ -1,31 +1,18 @@
 import { getEvents } from "./enemy";
 import { Event } from "./events";
 import { WORLD_HEIGHT, WORLD_WIDTH } from "./world";
+import { Player } from "./entities/player";
+import { Bird } from "./entities/bird";
 
 export interface State {
   bird: Bird;
   players: Player[];
 }
-export interface Player {
-  width: number;
-  height: number;
-  points: number;
-  x: number;
-  y: number;
-  vy: number;
-}
-export interface Bird {
-  x: number;
-  y: number;
-  radius: number;
-  vy: number;
-  vx: number;
-}
 
 export const PLAYER_WIDTH = 7;
 export const PLAYER_HEIGHT = 20;
 
-export const initialState = {
+export const getInitialState = () => ({
   bird: {
     x: WORLD_WIDTH / 2,
     y: WORLD_HEIGHT / 2,
@@ -51,7 +38,7 @@ export const initialState = {
       vy: 0,
     },
   ],
-};
+});
 
 function ballTouchesPlayerSide(ball: State["bird"], player: Player) {
   return (
@@ -151,7 +138,7 @@ export function update(
   state.bird.vx = clamp(-3, 3, state.bird.vx);
   state.bird.y = clamp(0, WORLD_HEIGHT - state.bird.radius * 2, state.bird.y);
   if (gameOver(state)) {
-    return initialState;
+    return getInitialState();
   }
 
   return state;

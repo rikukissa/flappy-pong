@@ -1,7 +1,7 @@
 import { InteractionEvent } from "pixi.js";
 
 import { container } from "./app";
-import { toWorldPosition } from "./render";
+import { toWorldPosition } from "./world";
 
 export type Event = { type: "mousemove"; x: number; y: number };
 
