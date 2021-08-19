@@ -1,3 +1,11 @@
-# node-idvoeb
+# flappy-pong
 
-[Edit on StackBlitz ⚡️](https://stackblitz.com/edit/node-idvoeb)
+![Flappy pong](./.github/flappy.png)
+
+## Get started
+
+`npm dev` - Start project in development more
+
+`npm build` - Build the project for production
+
+`npm run serve` - Serve production bundle locally

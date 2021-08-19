@@ -100,7 +100,7 @@ export async function createRenderer() {
     bird.x = ballPosition.x + radius;
     bird.y = ballPosition.y + radius;
 
-    if (Math.sign(bird.scale.x) != Math.sign(state.bird.vx)) {
+    if (Math.sign(bird.scale.x) !== Math.sign(state.bird.vx)) {
       bird.scale.x = bird.scale.x * -1;
     }
 
