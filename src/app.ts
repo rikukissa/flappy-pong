@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js";
 
 export const app = new PIXI.Application({
-  width: 800,
-  height: 400,
+  width: 500,
+  height: 300,
   backgroundColor: 0x7cc6ce,
 });
 
