@@ -1,5 +1,5 @@
 {
-  "name": "node-idvoeb",
+  "name": "flappy-pong",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
