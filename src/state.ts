@@ -82,7 +82,7 @@ export function update(
 ): State {
   updatePlayer(state.players[0], eventBuffer);
   updatePlayer(state.players[1], getEvents(state));
-  // state.bird.x += state.bird.vx;
+  state.bird.x += state.bird.vx;
   state.bird.y += state.bird.vy;
 
   if (
