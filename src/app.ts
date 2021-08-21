@@ -1,9 +1,15 @@
 import * as PIXI from "pixi.js";
 
+(window as any).PIXI = PIXI;
+
 export const app = new PIXI.Application({
-  width: 500,
-  height: 300,
+  width: window.innerWidth,
+  height: window.innerWidth / 2,
   backgroundColor: 0x7cc6ce,
+});
+
+window.addEventListener("resize", () => {
+  app.renderer.resize(window.innerWidth, window.innerWidth / 2);
 });
 
 export const container = new PIXI.Container();

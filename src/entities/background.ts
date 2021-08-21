@@ -6,6 +6,16 @@ export function render(
   ground: PIXI.TilingSprite,
   background: PIXI.TilingSprite
 ) {
+  background.width = app.view.width;
+  background.height = background.texture.height;
+
+  ground.width = app.view.width;
+  ground.height = ground.texture.height;
+
+  ground.transform.position.y = app.view.height - ground.height;
+  background.transform.position.y =
+    app.view.height - background.height - ground.height;
+
   ground.tilePosition.x = ground.tilePosition.x - tick;
   background.tilePosition.x = background.tilePosition.x - tick * 1.5;
 }
@@ -16,14 +26,5 @@ export function createSprites() {
   );
   const ground = new PIXI.TilingSprite(PIXI.utils.TextureCache["ground.png"]);
 
-  background.width = app.view.width;
-  background.height = background.texture.height;
-
-  ground.width = app.view.width;
-  ground.height = ground.texture.height;
-
-  ground.transform.position.y = app.view.height - ground.height;
-  background.transform.position.y =
-    app.view.height - background.height - ground.height;
   return [ground, background];
 }

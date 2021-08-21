@@ -3,10 +3,6 @@ import { clearBuffer, Event, eventBuffer } from "./events";
 import { createRenderer, Renderer } from "./render";
 import { getInitialState, State, update } from "./state";
 
-window.addEventListener("resize", () => {
-  app.resize();
-});
-
 window.document.body.appendChild(app.view);
 
 async function setup() {
@@ -18,16 +14,22 @@ async function setup() {
     clearBuffer();
   });
 }
-
+let updateFn = update;
 function gameLoop(
   renderer: Renderer,
   delta: number,
   state: State,
   eventBuffer: Event[]
 ) {
-  const newState = update(delta, state, eventBuffer);
+  const newState = updateFn(delta, state, eventBuffer);
   renderer(delta, newState);
   return newState;
 }
 
 setup();
+
+if (import.meta.hot) {
+  import.meta.hot.accept(["./state.ts"], ([newModule]) => {
+    updateFn = newModule.update;
+  });
+}
