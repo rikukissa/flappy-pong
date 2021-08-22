@@ -4,6 +4,7 @@ import { container } from "./app";
 import * as background from "./entities/background";
 import * as bird from "./entities/bird";
 import * as player from "./entities/player";
+import * as score from "./entities/score";
 
 import { State } from "./state";
 
@@ -27,6 +28,10 @@ export async function createRenderer() {
   container.addChild(groundSprite);
   container.addChild(backgroundSprite);
 
+  // Score
+  const scoreText = score.createSprite();
+  container.addChild(scoreText);
+
   // Bird
   const birdSprite = bird.createSprite();
   container.addChild(birdSprite);
@@ -38,6 +43,7 @@ export async function createRenderer() {
   return function render(tick: number, state: State) {
     background.render(tick, groundSprite, backgroundSprite);
     bird.render(tick, state, birdSprite);
+    score.render(tick, state, scoreText);
     state.players.forEach((playerState, i) =>
       player.render(playerState, playerSprites[i])
     );
