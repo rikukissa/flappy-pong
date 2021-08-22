@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@types/node": "^16.4.8",
+    "immer": "^9.0.5",
     "pixi.js": "^6.0.4"
   },
   "keywords": [],

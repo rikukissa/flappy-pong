@@ -15,22 +15,13 @@ async function setup() {
   });
 }
 
-let updateFn = update;
-
-if (import.meta.hot) {
-  // Hot swap update function in development
-  import.meta.hot.accept(["./state.ts"], ([newModule]) => {
-    updateFn = newModule.update;
-  });
-}
-
 function gameLoop(
   renderer: Renderer,
   delta: number,
   state: State,
   eventBuffer: Event[]
 ) {
-  const newState = updateFn(delta, state, eventBuffer);
+  const newState = update(delta, state, eventBuffer);
   renderer(delta, newState);
   return newState;
 }

@@ -19,6 +19,10 @@ export function update(state: State) {
 }
 
 export function render(tick: number, state: State, sprite: PIXI.Text) {
+  sprite.x = app.view.width / 2;
+  sprite.y = app.view.height / 10;
+  sprite.anchor.set(0.5, 0);
+
   sprite.text = getPointsText(state.players.map(({ points }) => points));
   sprite.updateText(true);
 }
@@ -31,8 +35,5 @@ export function createSprite() {
     align: "center",
   });
 
-  text.x = app.view.width / 2;
-  text.y = app.view.height / 10;
-  text.anchor.set(0.5, 0);
   return text;
 }
