@@ -1,7 +1,5 @@
 import * as PIXI from "pixi.js";
 
-(window as any).PIXI = PIXI;
-
 export const app = new PIXI.Application({
   width: window.innerWidth,
   height: window.innerWidth / 2,

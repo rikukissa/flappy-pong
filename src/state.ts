@@ -61,7 +61,7 @@ const updaters = {
 };
 
 export function update(
-  delta: number,
+  _delta: number,
   state: State,
   eventBuffer: Event[]
 ): State {

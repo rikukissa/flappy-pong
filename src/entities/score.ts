@@ -18,7 +18,7 @@ export function update(state: State) {
   return state;
 }
 
-export function render(tick: number, state: State, sprite: PIXI.Text) {
+export function render(_tick: number, state: State, sprite: PIXI.Text) {
   sprite.x = app.view.width / 2;
   sprite.y = app.view.height / 10;
   sprite.anchor.set(0.5, 0);
