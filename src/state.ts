@@ -13,7 +13,7 @@ export interface State {
 export const PLAYER_WIDTH = 7;
 export const PLAYER_HEIGHT = 20;
 
-export const getInitialState = () => ({
+export const initialState = {
   bird: {
     x: WORLD_WIDTH / 2,
     y: WORLD_HEIGHT / 2,
@@ -39,19 +39,21 @@ export const getInitialState = () => ({
       vy: 0,
     },
   ],
-});
+};
 
 function gameOver(state: State) {
   return state.bird.x < 0 || state.bird.x > WORLD_WIDTH;
 }
 
+// Creates an empty state, but keeps the points
 function resetState(state: State) {
-  const initialState = getInitialState();
-
-  initialState.players[0].points = state.players[0].points;
-  initialState.players[1].points = state.players[1].points;
-
-  return initialState;
+  return {
+    ...initialState,
+    players: initialState.players.map((player, i) => ({
+      ...player,
+      points: state.players[i].points,
+    })),
+  };
 }
 
 const updaters = {
