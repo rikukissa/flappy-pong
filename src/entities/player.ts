@@ -1,14 +1,10 @@
 import * as PIXI from "pixi.js";
 import { getEvents } from "../enemy";
 import { Event } from "../events";
-import { PLAYER_HEIGHT, State } from "../state";
+import { State } from "../state";
 
-import {
-  toScreenHeight,
-  toScreenPosition,
-  toScreenWidth,
-  WORLD_HEIGHT,
-} from "../world";
+import { toScreenHeight, toScreenPosition, toScreenWidth } from "../world";
+import { PLAYER_HEIGHT, WORLD_HEIGHT } from "../config";
 
 export interface Player {
   width: number;

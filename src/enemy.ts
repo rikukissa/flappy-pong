@@ -1,6 +1,6 @@
 import { Event } from "./events";
 import { State } from "./state";
-import { WORLD_WIDTH } from "./world";
+import { WORLD_WIDTH } from "./config";
 
 export function getEvents(state: State): Event[] {
   const slope = state.bird.vy / state.bird.vx;

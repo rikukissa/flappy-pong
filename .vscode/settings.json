@@ -1,5 +1,6 @@
 {
   "liveFrame.url": "http://localhost:3000",
   "liveFrame.title": "Local Development",
-  "liveFrame.pane": "Beside"
+  "liveFrame.pane": "Beside",
+  "editor.inlayHints.enabled": false
 }

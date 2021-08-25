@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 import { app } from "../app";
 import { State } from "../state";
-import { WORLD_WIDTH } from "../world";
+import { WORLD_WIDTH } from "../config";
 
 function getPointsText(points: number[]) {
   return points.join(" – ");

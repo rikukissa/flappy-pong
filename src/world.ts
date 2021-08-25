@@ -1,7 +1,5 @@
 import { app } from "./app";
-
-export const WORLD_WIDTH = 200;
-export const WORLD_HEIGHT = 100;
+import { WORLD_WIDTH, WORLD_HEIGHT } from "./config";
 
 type Position = {
   x: number;
