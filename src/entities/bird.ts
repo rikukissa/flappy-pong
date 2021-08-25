@@ -1,4 +1,5 @@
 import * as PIXI from "pixi.js";
+
 import { PLAYER_WIDTH, State } from "../state";
 import {
   toScreenPosition,
@@ -19,11 +20,12 @@ export interface Bird {
 function ballTouchesPlayerSide(ball: State["bird"], player: Player) {
   return (
     ball.x + ball.radius * 2 > player.x &&
-    ball.x < player.x + player.width &&
+    ball.x < player.x + player.width * 2 &&
     ball.y + ball.radius > player.y &&
     ball.y + ball.radius < player.y + player.height
   );
 }
+
 function ballTouchesPlayerTopOrBottom(ball: State["bird"], player: Player) {
   return (
     ball.x + ball.radius < player.x + player.width &&
