@@ -14,10 +14,12 @@ describe("when bird isn't hitting the bat", () => {
       vy: -0.1,
       x: 15.990185177431195,
       y: 35.7999999999998,
+      jumping: false,
+      hasBeenJumpingFor: 0,
     };
 
     const originalVX = state.bird.vx;
-    update(state);
+    update(state, [], 1);
 
     // Expect the direction the bird is heading to still be the same
     expect(Math.sign(state.bird.vx)).toBe(Math.sign(originalVX));
