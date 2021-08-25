@@ -9,6 +9,8 @@ export interface Bird {
   radius: number;
   vy: number;
   vx: number;
+  jumping: boolean;
+  hasBeenJumpingFor: number;
 }
 export { update } from "./state";
 export function render(

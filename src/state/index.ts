@@ -33,11 +33,13 @@ const updaters = {
 };
 
 export function update(
-  _delta: number,
+  delta: number,
   state: State,
   eventBuffer: Event[]
 ): State {
-  Object.values(updaters).forEach((updater) => updater(state, eventBuffer));
+  Object.values(updaters).forEach((updater) =>
+    updater(state, eventBuffer, delta)
+  );
 
   if (gameOver(state)) {
     return resetState(state);

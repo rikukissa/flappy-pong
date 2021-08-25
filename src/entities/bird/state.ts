@@ -1,6 +1,7 @@
 import { State } from "../../state";
 import { PLAYER_WIDTH, WORLD_HEIGHT, WORLD_WIDTH } from "../../config";
 import { Player } from "../player";
+import { Event } from "../../events";
 
 function ballTouchesPlayerSide(ball: State["bird"], player: Player) {
   return (
@@ -24,7 +25,25 @@ function clamp(min: number, max: number, value: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-export function update(state: State) {
+export function update(state: State, eventBuffer: Event[], delta: number) {
+  // Jumping
+  const jumpInput = eventBuffer.find(({ type }) => type === "space");
+  if (jumpInput && (!state.bird.jumping || state.bird.hasBeenJumpingFor > 20)) {
+    state.bird.vy = -1.5;
+    state.bird.jumping = true;
+  }
+
+  if (state.bird.jumping) {
+    state.bird.hasBeenJumpingFor += delta;
+
+    if (state.bird.hasBeenJumpingFor > 30) {
+      state.bird.jumping = false;
+      state.bird.hasBeenJumpingFor = 0;
+    }
+
+    state.bird.vy += 0.08;
+  }
+
   state.bird.x += state.bird.vx;
   state.bird.y += state.bird.vy;
 
@@ -53,9 +72,11 @@ export function update(state: State) {
       state.bird.x
     );
   }
+
   const verticallyTouchingPlayer = state.players.find((player) =>
     ballTouchesPlayerTopOrBottom(state.bird, player)
   );
+
   if (verticallyTouchingPlayer) {
     state.bird.vy *= -1.2;
     const touchesBottom =
@@ -78,6 +99,7 @@ export function update(state: State) {
       );
     }
   }
+
   state.bird.vx *= 0.9998;
   state.bird.vx = clamp(-3, 3, state.bird.vx);
   state.bird.y = clamp(0, WORLD_HEIGHT - state.bird.radius * 2, state.bird.y);

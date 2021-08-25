@@ -25,7 +25,7 @@ function updatePlayer(player: Player, eventBuffer: Event[]) {
   player.vy = (player.y - prevY) / 5;
 }
 
-export function update(state: State, eventBuffer: Event[]) {
+export function update(state: State, eventBuffer: Event[], _delta: number) {
   updatePlayer(state.players[0], eventBuffer);
   updatePlayer(state.players[1], getEvents(state));
 }

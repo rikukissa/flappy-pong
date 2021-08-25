@@ -12,6 +12,8 @@ export const getInitialState = () => ({
     radius: 2.5,
     vy: -0.1,
     vx: -0.6,
+    jumping: false,
+    hasBeenJumpingFor: 0,
   },
   players: [
     {

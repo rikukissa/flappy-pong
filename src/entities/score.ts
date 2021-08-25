@@ -2,12 +2,13 @@ import * as PIXI from "pixi.js";
 import { app } from "../app";
 import { State } from "../state";
 import { WORLD_WIDTH } from "../config";
+import { Event } from "../events";
 
 function getPointsText(points: number[]) {
   return points.join(" – ");
 }
 
-export function update(state: State) {
+export function update(state: State, _eventBuffer: Event[], _delta: number) {
   if (state.bird.x < 0) {
     state.players[1].points++;
   }
