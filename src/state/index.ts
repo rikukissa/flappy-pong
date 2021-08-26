@@ -47,3 +47,15 @@ export function update(
 
   return state;
 }
+
+// Hot swap update function in development
+if (import.meta.hot) {
+  import.meta.hot.accept(
+    ["../entities/bird/state.ts", "../entities/bird/index.ts"],
+    (modules) => {
+      modules.filter(Boolean).forEach((mod) => {
+        updaters.bird = mod.update;
+      });
+    }
+  );
+}

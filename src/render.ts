@@ -51,3 +51,9 @@ export async function createRenderer() {
 }
 
 export type Renderer = (tick: number, state: State) => void;
+
+if (import.meta.hot) {
+  import.meta.hot.accept(["./entities/bird/index.ts"], (...args) => {
+    console.log(args);
+  });
+}

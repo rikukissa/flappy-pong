@@ -10,7 +10,7 @@ export const getInitialState = () => ({
     x: WORLD_WIDTH / 2,
     y: WORLD_HEIGHT / 2,
     radius: 2.5,
-    vy: -0.1,
+    vy: 0.25,
     vx: -0.6,
     jumping: false,
     hasBeenJumpingFor: 0,
@@ -21,7 +21,7 @@ export const getInitialState = () => ({
       height: PLAYER_HEIGHT,
       points: 0,
       x: 2,
-      y: 0,
+      y: 71.5,
       vy: 0,
     },
     {
